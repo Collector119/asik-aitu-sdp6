@@ -1,0 +1,67 @@
+@startuml
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+skinparam dpi 150
+title Assignment 6 - Visitor Pattern
+
+interface Element {
+  +getName(): String
+  +getParent(): DirectoryNode
+  +accept(Visitor): void
+}
+
+class FileNode {
+  -name: String
+  -sizeInBytes: long
+  -parent: DirectoryNode
+  +getSizeInBytes(): long
+  +accept(Visitor): void
+}
+
+class DirectoryNode {
+  -name: String
+  -children: List<Element>
+  -parent: DirectoryNode
+  +getChildren(): List<Element>
+  +addFile(FileNode): void
+  +addDirectory(DirectoryNode): void
+  +accept(Visitor): void
+}
+
+interface Visitor {
+  +visit(FileNode): void
+  +visit(DirectoryNode): void
+}
+
+class TotalSizeVisitor {
+  -totalSize: long
+  +calculateTotalSize(Element): long
+}
+
+class SearchVisitor {
+  -nameFragment: String
+  -minimumSizeInBytes: long
+  -matchingPaths: List<String>
+  -currentPath: String
+  +findMatchingPaths(DirectoryNode): List<String>
+}
+
+class StatisticsVisitor {
+  -fileCount: int
+  -directoryCount: int
+  -maxDepth: int
+  -currentDepth: int
+  +collectStatistics(Element): void
+  +getFileCount(): int
+  +getDirectoryCount(): int
+  +getMaxDepth(): int
+}
+
+Element <|.. FileNode
+Element <|.. DirectoryNode
+DirectoryNode o-- "0..*" Element : children
+Element ..> Visitor
+Visitor <|.. TotalSizeVisitor
+Visitor <|.. SearchVisitor
+Visitor <|.. StatisticsVisitor
+@enduml
