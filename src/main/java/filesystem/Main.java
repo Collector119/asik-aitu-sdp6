@@ -4,6 +4,7 @@ import filesystem.elements.DirectoryNode;
 import filesystem.elements.FileNode;
 import filesystem.elements.TreeIntegrityException;
 import filesystem.visitors.SearchVisitor;
+import filesystem.visitors.StatisticsVisitor;
 import filesystem.visitors.TotalSizeVisitor;
 
 public class Main {
@@ -41,7 +42,18 @@ public class Main {
         System.out.println("from sdp: " + searchVisitor.findMatchingPaths(sdp));
         System.out.println("from drafts: " + searchVisitor.findMatchingPaths(drafts));
 
-        printTitle("3. Invalid changes");
+        printTitle("3. Statistics");
+        StatisticsVisitor statisticsVisitor = new StatisticsVisitor();
+        statisticsVisitor.collectStatistics(university);
+        System.out.println("university: files " + statisticsVisitor.getFileCount()
+                + ", directories " + statisticsVisitor.getDirectoryCount() + ", max depth "
+                + statisticsVisitor.getMaxDepth());
+        statisticsVisitor.collectStatistics(drafts);
+        System.out.println("drafts: files " + statisticsVisitor.getFileCount()
+                + ", directories " + statisticsVisitor.getDirectoryCount() + ", max depth "
+                + statisticsVisitor.getMaxDepth());
+
+        printTitle("4. Invalid changes");
         try {
             sdp.addFile(new FileNode("notes.txt", 10));
         } catch (TreeIntegrityException exception) {
